@@ -12,7 +12,7 @@ return [
     'api_key' => env('MENTION_API_KEY'),
 
     /*
-     * Authenticate as a Keycloak client with a service account instead of an API key.
+     * Authenticate with the OAuth 2.0 client-credentials grant instead of an API key.
      */
     'client_credentials' => [
         'token_url' => env('MENTION_API_TOKEN_URL'),

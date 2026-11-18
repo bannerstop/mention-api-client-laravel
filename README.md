@@ -3,7 +3,7 @@
 Laravel integration of [bannerstop/mention-api-client](https://github.com/bannerstop/mention-api-client),
 the PHP client for the `/v2` interface of mention-api. The package gives you:
 
-- **A publishable configuration** for the base URL, the credential (API key or Keycloak client credentials),
+- **A publishable configuration** for the base URL, the credential (API key or OAuth 2.0 client credentials),
   the cache store for the access token and the timeout, all from environment variables
 - **A `MentionApiClient` in the container**, resolvable by type, and the **`MentionApi` facade**, to run Queries and
   Routines
@@ -55,10 +55,11 @@ MENTION_API_KEY=your-api-key
 
 `MENTION_API_URL` is the address of mention-api **without** `/v2`: the client adds the path.
 
-### Keycloak client credentials
+### OAuth 2.0 client credentials
 
-The Keycloak client needs service accounts enabled and the client scope `mention-api`. The client fetches the access
-token itself and keeps it in the cache until shortly before it expires.
+Any OAuth 2.0 server that issues tokens mention-api accepts will do; pass its token endpoint (the example below is the
+shape Keycloak uses). The client must be allowed the client-credentials grant and the scope `mention-api`. The client
+fetches the access token itself and keeps it in the cache until shortly before it expires.
 
 ```dotenv
 MENTION_API_URL=https://mention-api.example.com
@@ -77,7 +78,7 @@ database, file): with a per-process store such as `array`, every PHP process fet
 | --- | --- | --- | --- |
 | `base_url` | `MENTION_API_URL` | none, required | Address of mention-api, `http(s)`, without `/v2` |
 | `api_key` | `MENTION_API_KEY` | none | The API key of your Consumer |
-| `client_credentials.token_url` | `MENTION_API_TOKEN_URL` | none | Token endpoint of Keycloak |
+| `client_credentials.token_url` | `MENTION_API_TOKEN_URL` | none | Token endpoint of the OAuth 2.0 server |
 | `client_credentials.client_id` | `MENTION_API_CLIENT_ID` | none | |
 | `client_credentials.client_secret` | `MENTION_API_CLIENT_SECRET` | none | |
 | `client_credentials.scope` | `MENTION_API_SCOPE` | `mention-api` | |

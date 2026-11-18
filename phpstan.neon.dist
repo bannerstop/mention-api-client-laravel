@@ -1,0 +1,11 @@
+parameters:
+    level: 8
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # The container builds the client, so the configuration exception is invisible to static analysis.
+        -
+            identifier: catch.neverThrown
+            path: src/Console/GenerateCommand.php
+    paths:
+        - src

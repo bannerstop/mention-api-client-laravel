@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bannerstop\MentionApiLaravel\Tests;
 
+use Bannerstop\MentionApi\Http\TimeoutAware;
 use Nyholm\Psr7\Response;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
@@ -12,8 +13,11 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Stands in for mention-api and the token endpoint: answers with what the test queued and records the requests.
  */
-final class FakeMentionApi implements ClientInterface
+final class FakeMentionApi implements ClientInterface, TimeoutAware
 {
+    /** @var float|null the timeout the client handed to it, in seconds */
+    public $timeout;
+
     /** @var list<array{method: string, url: string, headers: array<string, list<string>>, body: string}> */
     public $requests = [];
 
@@ -47,6 +51,13 @@ final class FakeMentionApi implements ClientInterface
             'detail' => 'Something is wrong.',
             'request_id' => $requestId,
         ], JSON_THROW_ON_ERROR));
+
+        return $this;
+    }
+
+    public function withTimeout(float $seconds): ClientInterface
+    {
+        $this->timeout = $seconds;
 
         return $this;
     }

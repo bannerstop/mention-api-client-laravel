@@ -25,4 +25,14 @@ return [
      * The cache store that keeps the access token of client_credentials: null for the default store, false for none.
      */
     'cache_store' => env('MENTION_API_CACHE_STORE'),
+
+    /*
+     * Seconds to wait for an answer, also for the whole call with the default HTTP client.
+     */
+    'timeout' => env('MENTION_API_TIMEOUT', 30),
+
+    /*
+     * The PSR-18 client to send requests with: a class or container binding. null uses Guzzle.
+     */
+    'http_client' => null,
 ];

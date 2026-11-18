@@ -93,4 +93,41 @@ final class ClientTest extends TestCase
 
         self::assertCount(4, $this->fake()->requests, 'Every client fetches its own token.');
     }
+
+    public function testTheTimeoutIs30SecondsByDefault(): void
+    {
+        $this->useApiKey();
+
+        $this->app->make(MentionApiClient::class);
+
+        self::assertSame(30.0, $this->fake()->timeout);
+    }
+
+    public function testTheConfiguredTimeoutReachesTheHttpClient(): void
+    {
+        $this->useApiKey();
+        $this->app['config']->set('mention-api.timeout', 7.5);
+
+        $this->app->make(MentionApiClient::class);
+
+        self::assertSame(7.5, $this->fake()->timeout);
+    }
+
+    public function testTheTimeoutCanComeFromAnEnvironmentVariableAsAString(): void
+    {
+        $this->useApiKey();
+        $this->app['config']->set('mention-api.timeout', '12');
+
+        $this->app->make(MentionApiClient::class);
+
+        self::assertSame(12.0, $this->fake()->timeout);
+    }
+
+    public function testWithoutAConfiguredHttpClientTheClientStillResolves(): void
+    {
+        $this->useApiKey();
+        $this->app['config']->set('mention-api.http_client', null);
+
+        self::assertInstanceOf(MentionApiClient::class, $this->app->make(MentionApiClient::class));
+    }
 }

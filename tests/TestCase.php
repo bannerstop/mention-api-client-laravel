@@ -43,4 +43,23 @@ abstract class TestCase extends Testbench
         $this->app['config']->set('mention-api.base_url', self::BASE_URL);
         $this->app['config']->set('mention-api.api_key', $key);
     }
+
+    /**
+     * @param array<string, mixed> $overrides
+     */
+    protected function useClientCredentials(array $overrides = []): void
+    {
+        $this->app['config']->set('mention-api.base_url', self::BASE_URL);
+        $this->app['config']->set('mention-api.client_credentials', array_replace([
+            'token_url' => 'https://sso.example.com/realms/example/protocol/openid-connect/token',
+            'client_id' => 'my-app',
+            'client_secret' => 'the-client-secret',
+            'scope' => 'mention-api',
+        ], $overrides));
+    }
+
+    protected function enqueueToken(string $token = 'token-1'): void
+    {
+        $this->fake()->enqueueJson(['access_token' => $token, 'expires_in' => 300, 'token_type' => 'Bearer']);
+    }
 }

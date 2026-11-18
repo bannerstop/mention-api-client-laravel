@@ -9,6 +9,7 @@ use Bannerstop\MentionApi\MentionApiConfig;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\SimpleCache\CacheInterface;
 
 final class MentionApiServiceProvider extends ServiceProvider
 {
@@ -21,11 +22,43 @@ final class MentionApiServiceProvider extends ServiceProvider
             $factory = new Psr17Factory();
 
             return new MentionApiClient(
-                MentionApiConfig::forApiKey((string) $options['base_url'], (string) $options['api_key']),
+                $this->config($options),
                 $app->make($options['http_client']),
                 $factory,
-                $factory
+                $factory,
+                $this->cache($app, $options['cache_store'] ?? null)
             );
         });
+    }
+
+    /**
+     * @param array<string, mixed> $options
+     */
+    private function config(array $options): MentionApiConfig
+    {
+        if (null !== ($options['api_key'] ?? null)) {
+            return MentionApiConfig::forApiKey((string) $options['base_url'], (string) $options['api_key']);
+        }
+        $credentials = (array) $options['client_credentials'];
+
+        return MentionApiConfig::forClientCredentials(
+            (string) $options['base_url'],
+            (string) $credentials['token_url'],
+            (string) $credentials['client_id'],
+            (string) $credentials['client_secret'],
+            (string) $credentials['scope']
+        );
+    }
+
+    /**
+     * @param string|false|null $store
+     */
+    private function cache(Application $app, $store): ?CacheInterface
+    {
+        if (false === $store) {
+            return null;
+        }
+
+        return $app->make('cache')->store($store);
     }
 }

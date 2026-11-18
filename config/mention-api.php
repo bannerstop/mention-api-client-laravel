@@ -10,4 +10,19 @@ return [
      * The API key of your Consumer. Use this or client_credentials.
      */
     'api_key' => env('MENTION_API_KEY'),
+
+    /*
+     * Authenticate as a Keycloak client with a service account instead of an API key.
+     */
+    'client_credentials' => [
+        'token_url' => env('MENTION_API_TOKEN_URL'),
+        'client_id' => env('MENTION_API_CLIENT_ID'),
+        'client_secret' => env('MENTION_API_CLIENT_SECRET'),
+        'scope' => env('MENTION_API_SCOPE', 'mention-api'),
+    ],
+
+    /*
+     * The cache store that keeps the access token of client_credentials: null for the default store, false for none.
+     */
+    'cache_store' => env('MENTION_API_CACHE_STORE'),
 ];

@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "bannerstop/mention-api-client": "dev-main as 1.0.x-dev",
+        "bannerstop/mention-api-client": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "illuminate/console": "^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
         "illuminate/contracts": "^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
@@ -52,12 +52,5 @@
     },
     "config": {
         "sort-packages": true
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/bannerstop/mention-api-client",
-            "no-api": true
-        }
-    ]
+    }
 }

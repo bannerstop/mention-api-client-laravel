@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Bannerstop\MentionApiLaravel;
 
 use Bannerstop\MentionApi\MentionApiClient;
-use Bannerstop\MentionApiLaravel\Console\GenerateCommand;
 use Bannerstop\MentionApiLaravel\Config\ConfigFactory;
+use Bannerstop\MentionApiLaravel\Console\GenerateCommand;
+use Bannerstop\MentionApiLaravel\Exception\ConfigurationException;
 use Bannerstop\MentionApiLaravel\Http\GuzzleHttpClient;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Client\ClientInterface;
 use Psr\SimpleCache\CacheInterface;
 
 final class MentionApiServiceProvider extends ServiceProvider
@@ -25,7 +27,7 @@ final class MentionApiServiceProvider extends ServiceProvider
 
             return new MentionApiClient(
                 ConfigFactory::create($options),
-                null === ($options['http_client'] ?? null) ? new GuzzleHttpClient() : $app->make($options['http_client']),
+                $this->httpClient($app, $options['http_client'] ?? null),
                 $factory,
                 $factory,
                 $this->cache($app, $options['cache_store'] ?? null)
@@ -51,5 +53,21 @@ final class MentionApiServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/../config/mention-api.php' => $this->app->configPath('mention-api.php')], 'mention-api-config');
             $this->commands([GenerateCommand::class]);
         }
+    }
+
+    /**
+     * @param mixed $configured
+     */
+    private function httpClient(Application $app, $configured): ClientInterface
+    {
+        if (null === $configured) {
+            return new GuzzleHttpClient();
+        }
+        $client = \is_string($configured) ? $app->make($configured) : $configured;
+        if (!$client instanceof ClientInterface) {
+            throw new ConfigurationException('mention-api.http_client must be the class or container binding of a PSR-18 client (Psr\\Http\\Client\\ClientInterface) or null for Guzzle.');
+        }
+
+        return $client;
     }
 }

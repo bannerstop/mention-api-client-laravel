@@ -99,6 +99,14 @@ final class ConfigurationTest extends TestCase
         }
     }
 
+    public function testTheHttpClientMustBeAPsr18Client(): void
+    {
+        $this->useApiKey();
+        $this->configure(['http_client' => \stdClass::class]);
+
+        $this->assertRejected('mention-api.http_client', 'PSR-18');
+    }
+
     public function testAnEmptyScopeFallsBackToTheDefault(): void
     {
         $this->useClientCredentials(['scope' => '']);

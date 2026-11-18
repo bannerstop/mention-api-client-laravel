@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Bannerstop\MentionApiLaravel\Tests;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Artisan;
 
 final class GenerateCommandTest extends TestCase
@@ -23,21 +24,7 @@ final class GenerateCommandTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        $this->remove($this->projectDir);
-    }
-
-    private function remove(string $path): void
-    {
-        if (is_dir($path) && !is_link($path)) {
-            foreach (scandir($path) ?: [] as $entry) {
-                if ('.' !== $entry && '..' !== $entry) {
-                    $this->remove($path . '/' . $entry);
-                }
-            }
-            rmdir($path);
-        } elseif (file_exists($path)) {
-            unlink($path);
-        }
+        (new Filesystem())->deleteDirectory($this->projectDir);
     }
 
     /**
@@ -122,6 +109,8 @@ final class GenerateCommandTest extends TestCase
         [$status, $output] = $this->generate(['--check' => true]);
         self::assertSame(1, $status);
         self::assertStringContainsString('Queries.php', $output);
+        self::assertStringContainsString('php artisan mention-api:generate', $output);
+        self::assertStringNotContainsString('vendor/bin/mention-api-client', $output);
     }
 
     public function testAMissingNamespaceIsExplainedAndNothingIsFetched(): void

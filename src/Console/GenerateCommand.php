@@ -33,10 +33,10 @@ final class GenerateCommand extends Command
     public function handle(): int
     {
         $stdout = function (string $text): void {
-            $this->output->write($text, false, OutputInterface::OUTPUT_RAW);
+            $this->output->write(self::artisanHint($text), false, OutputInterface::OUTPUT_RAW);
         };
         $stderr = function (string $text): void {
-            $this->output->getErrorStyle()->write($text, false, OutputInterface::OUTPUT_RAW);
+            $this->output->getErrorStyle()->write(self::artisanHint($text), false, OutputInterface::OUTPUT_RAW);
         };
 
         $config = (array) $this->laravel->make('config')->get('mention-api.generator');
@@ -103,5 +103,13 @@ final class GenerateCommand extends Command
                 unlink($temporary);
             }
         }
+    }
+
+    /**
+     * The core generator names its own binary in its hints; here the command is the Artisan one.
+     */
+    private static function artisanHint(string $text): string
+    {
+        return str_replace('vendor/bin/mention-api-client generate', 'php artisan mention-api:generate', $text);
     }
 }

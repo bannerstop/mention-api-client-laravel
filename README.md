@@ -151,7 +151,7 @@ php artisan mention-api:generate --namespace='App\Mention' --dir=app/Mention
 ```
 
 Commit the output. Nothing is generated at runtime, and the generated code calls the client, so authentication, errors,
-retries and request ids behave as with `run()`. `--dir` is relative to the base path of the application. Without options
+retries and request ids behave as with `run()`. `--dir`, `--source` and `--composer` are relative to the base path of the application. Without options
 the command writes to `app/Mention` in the namespace `App\Mention`; change the defaults in `generator` of the
 configuration.
 

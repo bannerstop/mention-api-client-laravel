@@ -29,7 +29,7 @@ final class ConfigFactory
      */
     public static function create(array $options): MentionApiConfig
     {
-        $baseUrl = self::string($options['base_url'] ?? null);
+        $baseUrl = self::nonBlank($options['base_url'] ?? null);
         if (null === $baseUrl) {
             throw new ConfigurationException('mention-api.base_url (MENTION_API_URL) is required: the address of mention-api, e.g. https://mention-api.example.com');
         }
@@ -48,10 +48,10 @@ final class ConfigFactory
      */
     private static function authenticated(string $baseUrl, array $options): MentionApiConfig
     {
-        $apiKey = self::string($options['api_key'] ?? null);
+        $apiKey = self::nonBlank($options['api_key'] ?? null);
         $credentials = [];
         foreach ((array) ($options['client_credentials'] ?? []) as $name => $value) {
-            $credentials[$name] = self::string($value);
+            $credentials[$name] = self::nonBlank($value);
         }
         $credentialsUsed = [] !== array_filter(array_intersect_key($credentials, self::CREDENTIAL_OPTIONS), static function (?string $value): bool {
             return null !== $value;
@@ -104,7 +104,7 @@ final class ConfigFactory
     /**
      * @param mixed $value
      */
-    private static function string($value): ?string
+    private static function nonBlank($value): ?string
     {
         if (null === $value || (\is_string($value) && '' === trim($value))) {
             return null;

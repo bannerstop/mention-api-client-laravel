@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bannerstop\MentionApiLaravel\Http;
 
 use Bannerstop\MentionApi\Http\TimeoutAware;
+use Bannerstop\MentionApi\MentionApiConfig;
 use GuzzleHttp\Client;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
@@ -28,7 +29,7 @@ final class GuzzleHttpClient implements ClientInterface, TimeoutAware
      */
     public function __construct(array $options = [])
     {
-        $this->options = $options + ['timeout' => 30.0, 'connect_timeout' => self::CONNECT_TIMEOUT];
+        $this->options = $options + ['timeout' => MentionApiConfig::DEFAULT_TIMEOUT, 'connect_timeout' => self::CONNECT_TIMEOUT];
         $this->client = new Client($this->options);
     }
 

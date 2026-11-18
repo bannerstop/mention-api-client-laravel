@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bannerstop\MentionApiLaravel;
 
 use Bannerstop\MentionApi\MentionApiClient;
+use Bannerstop\MentionApiLaravel\Console\GenerateCommand;
 use Bannerstop\MentionApiLaravel\Config\ConfigFactory;
 use Bannerstop\MentionApiLaravel\Http\GuzzleHttpClient;
 use Illuminate\Contracts\Foundation\Application;
@@ -42,5 +43,13 @@ final class MentionApiServiceProvider extends ServiceProvider
         }
 
         return $app->make('cache')->store($store);
+    }
+
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([__DIR__ . '/../config/mention-api.php' => $this->app->configPath('mention-api.php')], 'mention-api-config');
+            $this->commands([GenerateCommand::class]);
+        }
     }
 }

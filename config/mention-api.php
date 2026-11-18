@@ -35,4 +35,12 @@ return [
      * The PSR-18 client to send requests with: a class or container binding. null uses Guzzle.
      */
     'http_client' => null,
+
+    /*
+     * Defaults of the mention-api:generate command. The directory is relative to the base path of the application.
+     */
+    'generator' => [
+        'namespace' => 'App\\Mention',
+        'directory' => 'app/Mention',
+    ],
 ];

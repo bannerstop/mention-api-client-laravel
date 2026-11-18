@@ -4,7 +4,7 @@ All notable changes to this package are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the package follows
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.0] - 2026-11-18
 
 ### Added
 
@@ -18,3 +18,5 @@ All notable changes to this package are documented here. The format follows
 - The Artisan command `mention-api:generate`, which fetches the OpenAPI document of your Consumer with the configured
   client and writes the typed wrappers of the core package; `--check` fails when the committed classes are out of date.
 - Support for PHP 7.4 to 8.5 and Laravel 8 to 13.
+
+[1.0.0]: https://github.com/bannerstop/mention-api-client-laravel/releases/tag/v1.0.0

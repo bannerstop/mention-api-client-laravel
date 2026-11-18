@@ -182,4 +182,26 @@ final class GenerateCommandTest extends TestCase
         self::assertSame(2, $status);
         self::assertStringContainsString('mention-api.base_url', $output);
     }
+
+    public function testTheGeneratedClassesAreBuiltByTheContainerAndUseTheConfiguredClient(): void
+    {
+        $this->useApiKey();
+        $this->queueDocument();
+        [$status, $output] = $this->generate(['--namespace' => 'Generated\Laravel', '--dir' => 'generated']);
+        self::assertSame(0, $status, $output);
+        foreach (['Queries', 'Query/ListWidgetsParameters', 'Query/ListWidgetsRow'] as $file) {
+            require_once $this->projectDir . '/generated/' . $file . '.php';
+        }
+        $this->fake()->enqueueRows([['widgetId' => 5, 'label' => 'five']]);
+
+        $queries = $this->app->make('Generated\\Laravel\\Queries');
+        $rows = $queries->listWidgets();
+
+        self::assertCount(1, $rows);
+        foreach ($rows as $row) {
+            self::assertSame(5, $row->widgetId);
+            self::assertSame('five', $row->label);
+        }
+        self::assertSame(['Bearer the-api-key'], $this->fake()->requests[1]['headers']['authorization']);
+    }
 }

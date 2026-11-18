@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Bannerstop\MentionApiLaravel;
 
 use Bannerstop\MentionApi\MentionApiClient;
-use Bannerstop\MentionApi\MentionApiConfig;
+use Bannerstop\MentionApiLaravel\Config\ConfigFactory;
 use Bannerstop\MentionApiLaravel\Http\GuzzleHttpClient;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
@@ -23,36 +23,13 @@ final class MentionApiServiceProvider extends ServiceProvider
             $factory = new Psr17Factory();
 
             return new MentionApiClient(
-                $this->config($options),
+                ConfigFactory::create($options),
                 null === ($options['http_client'] ?? null) ? new GuzzleHttpClient() : $app->make($options['http_client']),
                 $factory,
                 $factory,
                 $this->cache($app, $options['cache_store'] ?? null)
             );
         });
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    private function config(array $options): MentionApiConfig
-    {
-        if (null !== ($options['api_key'] ?? null)) {
-            $config = MentionApiConfig::forApiKey((string) $options['base_url'], (string) $options['api_key']);
-
-            return $config->withTimeout((float) $options['timeout']);
-        }
-        $credentials = (array) $options['client_credentials'];
-
-        $config = MentionApiConfig::forClientCredentials(
-            (string) $options['base_url'],
-            (string) $credentials['token_url'],
-            (string) $credentials['client_id'],
-            (string) $credentials['client_secret'],
-            (string) $credentials['scope']
-        );
-
-        return $config->withTimeout((float) $options['timeout']);
     }
 
     /**
